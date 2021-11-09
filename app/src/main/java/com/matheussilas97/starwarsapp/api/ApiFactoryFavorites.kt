@@ -1,5 +1,6 @@
 package com.matheussilas97.starwarsapp.api
 
+import com.matheussilas97.starwarsapp.api.service.FavoritesService
 import com.matheussilas97.starwarsapp.utils.Constants
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -42,7 +43,6 @@ object ApiFactoryFavorites {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    fun <T> create(serviceClass: Class<T>): T {
-        return retrofit().create(serviceClass)
-    }
+    fun create(): FavoritesService = retrofit().create(FavoritesService::class.java)
+
 }

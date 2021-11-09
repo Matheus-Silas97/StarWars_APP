@@ -1,21 +1,16 @@
 package com.matheussilas97.starwarsapp.view.charactersdetails
 
-import android.app.Application
 import android.content.Context
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import com.matheussilas97.starwarsapp.R
-import com.matheussilas97.starwarsapp.api.Apifactory
-import com.matheussilas97.starwarsapp.api.ApiFactoryFavorites
 import com.matheussilas97.starwarsapp.api.response.FavoriteErrorResponse
 import com.matheussilas97.starwarsapp.api.response.FavoritesResponse
-import com.matheussilas97.starwarsapp.api.service.FavoritesService
 import com.matheussilas97.starwarsapp.api.response.CharactersDetailsResponse
 import com.matheussilas97.starwarsapp.api.response.HomeWorldResponse
 import com.matheussilas97.starwarsapp.api.response.SpeciesResponse
-import com.matheussilas97.starwarsapp.api.service.ApiServices
 import com.matheussilas97.starwarsapp.database.model.FavoriteModel
 import com.matheussilas97.starwarsapp.database.repository.FavoriteRepository
 import com.matheussilas97.starwarsapp.utils.Utils
@@ -23,11 +18,11 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class CharactersDetailsViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val services = Apifactory.create(ApiServices::class.java)
-    private val serviceFavorite = ApiFactoryFavorites.create(FavoritesService::class.java)
-    private val favoriteRepository = FavoriteRepository(application.applicationContext)
+class CharactersDetailsViewModel(
+    private val repository: FavoriteRepository,
+    private val detailsRepository: DetailsRepository,
+    private val favoriteRepository: FavoriteRepository
+) : ViewModel() {
 
     private var mSaveStatus = MutableLiveData<Boolean>()
     val saveStatus: LiveData<Boolean> = mSaveStatus
@@ -35,10 +30,11 @@ class CharactersDetailsViewModel(application: Application) : AndroidViewModel(ap
     private var mSaveFavorite = MutableLiveData<Boolean>()
     val saveFavorite: LiveData<Boolean> = mSaveFavorite
 
+
     fun getDetails(url: String, context: Context): MutableLiveData<CharactersDetailsResponse> {
         val result = MutableLiveData<CharactersDetailsResponse>()
         val dialog = Utils.showLoading(context, R.string.loading)
-        services.details(url).enqueue(object : Callback<CharactersDetailsResponse> {
+        detailsRepository.getCharacterDetails(url, object : Callback<CharactersDetailsResponse> {
             override fun onResponse(
                 call: Call<CharactersDetailsResponse>,
                 response: Response<CharactersDetailsResponse>
@@ -64,8 +60,7 @@ class CharactersDetailsViewModel(application: Application) : AndroidViewModel(ap
 
     fun getHomeWorld(url: String): MutableLiveData<HomeWorldResponse> {
         val result = MutableLiveData<HomeWorldResponse>()
-
-        services.getHomeWorld(url).enqueue(object : Callback<HomeWorldResponse> {
+        detailsRepository.getHomeWorld(url, object : Callback<HomeWorldResponse> {
             override fun onResponse(
                 call: Call<HomeWorldResponse>,
                 response: Response<HomeWorldResponse>
@@ -87,7 +82,7 @@ class CharactersDetailsViewModel(application: Application) : AndroidViewModel(ap
     fun getSpecies(url: String): MutableLiveData<SpeciesResponse> {
         val result = MutableLiveData<SpeciesResponse>()
 
-        services.getSpecies(url).enqueue(object : Callback<SpeciesResponse> {
+        detailsRepository.getSpecies(url, object : Callback<SpeciesResponse> {
             override fun onResponse(
                 call: Call<SpeciesResponse>,
                 response: Response<SpeciesResponse>
@@ -111,7 +106,7 @@ class CharactersDetailsViewModel(application: Application) : AndroidViewModel(ap
     fun postFavorite(id: String): MutableLiveData<String> {
         val result = MutableLiveData<String>()
 
-        serviceFavorite.postFavorites(id).enqueue(object : Callback<FavoritesResponse> {
+        favoriteRepository.postFavorite(id, object : Callback<FavoritesResponse> {
             override fun onResponse(
                 call: Call<FavoritesResponse>,
                 response: Response<FavoritesResponse>
@@ -141,17 +136,15 @@ class CharactersDetailsViewModel(application: Application) : AndroidViewModel(ap
     }
 
     fun saveClass(favorite: FavoriteModel) {
-        mSaveFavorite.value = favoriteRepository.addStudents(favorite)
+        mSaveFavorite.value = repository.addStudents(favorite)
     }
 
-    fun isFavorite(url: String): Boolean {
-        return favoriteRepository.isFavorite(url)
-    }
+    fun isFavorite(url: String): Boolean = repository.isFavorite(url)
 
     fun deleteFavorite(id: String) {
-        val favorite = favoriteRepository.getLoad(id)
+        val favorite = repository.getLoad(id)
         if (favorite != null) {
-            favoriteRepository.deleteStudents(favorite)
+            repository.deleteStudents(favorite)
         }
     }
 }

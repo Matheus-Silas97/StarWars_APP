@@ -18,21 +18,22 @@ import com.matheussilas97.starwarsapp.utils.BaseFragment
 import com.matheussilas97.starwarsapp.utils.Constants
 import com.matheussilas97.starwarsapp.utils.PaginationScrollListener
 import com.matheussilas97.starwarsapp.view.charactersdetails.DetailsActivity
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class MainFragment : BaseFragment() {
 
     private lateinit var binding: FragmentMainBinding
-    private lateinit var viewModel: MainViewModel
+    private val viewModel: MainViewModel by viewModel()
 
-    private lateinit var adapter: MainAdapter
+    private val adapter: MainAdapter by inject()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMainBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
 
         viewModel.getListCharacter()
         
@@ -47,7 +48,6 @@ class MainFragment : BaseFragment() {
         val layoutManager =
             GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
         binding.recyclerMain.layoutManager = layoutManager
-        adapter = MainAdapter()
         adapter.clear()
         viewModel.clearCurrentPage()
         binding.recyclerMain.adapter = adapter

@@ -1,9 +1,7 @@
 package com.matheussilas97.starwarsapp.view.charactersdetails
 
 import android.os.Bundle
-import android.view.MenuItem
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.matheussilas97.starwarsapp.R
 import com.matheussilas97.starwarsapp.database.model.FavoriteModel
@@ -11,13 +9,15 @@ import com.matheussilas97.starwarsapp.databinding.ActivityDetailsBinding
 import com.matheussilas97.starwarsapp.utils.BaseActivity
 import com.matheussilas97.starwarsapp.utils.Constants
 import com.matheussilas97.starwarsapp.utils.Utils
-import kotlinx.coroutines.*
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DetailsActivity : BaseActivity() {
 
     private lateinit var binding: ActivityDetailsBinding
-    private lateinit var viewModel: CharactersDetailsViewModel
+    private val viewModel: CharactersDetailsViewModel by viewModel()
 
+    private val adapter: SpeciesAdapter by inject()
     private var listSpecies = mutableListOf<String>()
 
     private var urlCharacter = ""
@@ -27,7 +27,6 @@ class DetailsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        viewModel = ViewModelProvider(this)[CharactersDetailsViewModel::class.java]
 
         val extras = intent.extras
         if (extras != null) {
@@ -106,7 +105,6 @@ class DetailsActivity : BaseActivity() {
     }
 
     private fun buildSpeciesList(list: List<String>) {
-        val adapter = SpeciesAdapter()
         binding.recyclerSpecies.layoutManager = LinearLayoutManager(this)
         binding.recyclerSpecies.adapter = adapter
         adapter.updateTask(list)
