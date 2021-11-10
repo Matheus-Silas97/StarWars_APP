@@ -1,6 +1,5 @@
 package com.matheussilas97.starwarsapp.di
 
-import androidx.room.Room
 import com.matheussilas97.starwarsapp.api.ApiFactoryFavorites
 import com.matheussilas97.starwarsapp.api.Apifactory
 import com.matheussilas97.starwarsapp.database.MainDataBase
@@ -13,12 +12,12 @@ import com.matheussilas97.starwarsapp.view.favorites.FavoriteAdapter
 import com.matheussilas97.starwarsapp.view.favorites.FavoriteViewModel
 import com.matheussilas97.starwarsapp.view.main.MainAdapter
 import com.matheussilas97.starwarsapp.view.main.MainViewModel
+import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 private val moduleDb = module {
-    single { get<MainDataBase>().favoriteDao() }
-    single { Room.databaseBuilder(get(), MainDataBase::class.java, "favDB").allowMainThreadQueries().build() }
+    single { MainDataBase.getInstance(androidContext()).favoriteDao }
 }
 
 private val moduleService = module {
@@ -29,12 +28,12 @@ private val moduleService = module {
 private val moduleRepository = module {
     single { MainRepository(service = get()) }
     single { DetailsRepository(service = get()) }
-    single { FavoriteRepository(factoryFavorities = get(), mainDataBase = get()) }
+    single { FavoriteRepository(factoryFavorities = get(), favoriteDao = get()) }
 }
 
 private val moduleViewModel = module {
     viewModel { MainViewModel(repository = get()) }
-    viewModel { CharactersDetailsViewModel(repository = get(), detailsRepository = get(), favoriteRepository = get())}
+    viewModel { CharactersDetailsViewModel(repository = get(), detailsRepository = get(), favoriteRepository = get()) }
     viewModel { FavoriteViewModel(repository = get()) }
 }
 

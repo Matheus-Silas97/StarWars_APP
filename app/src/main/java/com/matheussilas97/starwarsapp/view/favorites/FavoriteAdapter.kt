@@ -37,6 +37,7 @@ class FavoriteAdapter : RecyclerView.Adapter<FavoriteAdapter.FavoriteViewHolder>
 
 
     fun updateList(itemList: List<FavoriteModel>) {
+        clear()
         charactersList.addAll(itemList)
         notifyDataSetChanged()
     }

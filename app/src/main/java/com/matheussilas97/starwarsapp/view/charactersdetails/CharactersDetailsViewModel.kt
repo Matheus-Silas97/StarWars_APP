@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.matheussilas97.starwarsapp.R
 import com.matheussilas97.starwarsapp.api.response.FavoriteErrorResponse
@@ -14,6 +15,7 @@ import com.matheussilas97.starwarsapp.api.response.SpeciesResponse
 import com.matheussilas97.starwarsapp.database.model.FavoriteModel
 import com.matheussilas97.starwarsapp.database.repository.FavoriteRepository
 import com.matheussilas97.starwarsapp.utils.Utils
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -136,15 +138,21 @@ class CharactersDetailsViewModel(
     }
 
     fun saveClass(favorite: FavoriteModel) {
-        mSaveFavorite.value = repository.addStudents(favorite)
+        viewModelScope.launch {
+            mSaveFavorite.value = repository.addStudents(favorite)
+        }
     }
 
     fun isFavorite(url: String): Boolean = repository.isFavorite(url)
 
+
     fun deleteFavorite(id: String) {
-        val favorite = repository.getLoad(id)
-        if (favorite != null) {
-            repository.deleteStudents(favorite)
+        viewModelScope.launch {
+            val favorite = repository.getLoad(id)
+            if (favorite != null) {
+                repository.deleteStudents(favorite)
+            }
         }
+
     }
 }

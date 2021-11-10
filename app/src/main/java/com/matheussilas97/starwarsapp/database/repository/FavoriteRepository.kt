@@ -3,21 +3,21 @@ package com.matheussilas97.starwarsapp.database.repository
 import com.matheussilas97.starwarsapp.api.ApiFactoryFavorites
 import com.matheussilas97.starwarsapp.api.response.FavoritesResponse
 import com.matheussilas97.starwarsapp.database.MainDataBase
+import com.matheussilas97.starwarsapp.database.dao.FavoriteDAO
 import com.matheussilas97.starwarsapp.database.model.FavoriteModel
 import retrofit2.Callback
 
-class FavoriteRepository(private val factoryFavorities: ApiFactoryFavorites, private val mainDataBase: MainDataBase) {
+class FavoriteRepository(private val factoryFavorities: ApiFactoryFavorites, private val favoriteDao: FavoriteDAO) {
 
+    suspend fun listFavorites(): List<FavoriteModel> = favoriteDao.getAllFavorites()
 
-    fun listFavorites(): List<FavoriteModel> = mainDataBase.favoriteDao().getAllFavorites()
+    suspend fun addStudents(favorite: FavoriteModel): Boolean = favoriteDao.insertFavorite(favorite) > 0
 
-    fun addStudents(favorite: FavoriteModel): Boolean = mainDataBase.favoriteDao().insertFavorite(favorite) > 0
+    suspend fun deleteStudents(favorite: FavoriteModel) = favoriteDao.deleteFavorite(favorite)
 
-    fun deleteStudents(favorite: FavoriteModel) = mainDataBase.favoriteDao().deleteFavorite(favorite)
+    suspend fun getLoad(id: String): FavoriteModel? = favoriteDao.load(id)
 
-    fun getLoad(id: String): FavoriteModel? = mainDataBase.favoriteDao().load(id)
-
-    fun isFavorite(url: String): Boolean = mainDataBase.favoriteDao().isFavorite(url)
+    fun isFavorite(url: String): Boolean = favoriteDao.isFavorite(url)
 
 
     fun postFavorite(id: String, callback: Callback<FavoritesResponse>) {
