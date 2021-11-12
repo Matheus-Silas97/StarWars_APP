@@ -6,7 +6,14 @@ Aplicativo android que lista personagens do universo de Star Wars.
 <p>-Listagem de personagens</p>
 <p>-Favoritar personagens</p>
 
-Aplicativo feito utilizando: Arquitetura MVVM, LiveData, Data Binding, Retrofit, Room e Koin.
+##Aplicativo feito utilizando: 
+Arquitetura MVVM
+Room
+Koin
+Retrofit
+LiveData
+Data Binding
+
 
 Aplicativo simula erro na requisição de favoritar nas metades das requisições e apresenta mensagem de erro retornada pela API.
 
