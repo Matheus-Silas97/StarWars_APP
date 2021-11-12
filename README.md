@@ -6,7 +6,7 @@ Aplicativo android que lista personagens do universo de Star Wars.
 <p>-Listagem de personagens</p>
 <p>-Favoritar personagens</p>
 
-##Aplicativo feito utilizando: 
+## Aplicativo feito utilizando:
 Arquitetura MVVM
 Room
 Koin
